@@ -1,0 +1,9 @@
+@(dashboard: models.Dashboard)
+
+@main(title = "Rally Reporter") {
+    
+    @for(report <- dashboard.reports) {
+       	@Html(report)
+    } 
+    
+}

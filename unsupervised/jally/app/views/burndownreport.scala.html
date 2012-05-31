@@ -1,0 +1,50 @@
+@(report: models.BurndownReport)
+
+@rcontainer(title="test") {
+    
+   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawVisualization);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawVisualization() {
+    	  // Create and populate the data table.
+    	  var data = google.visualization.arrayToDataTable([
+    	    ['Day', 'Burndown', 'ideal', 'Accepted'],
+
+    	    @for(row <- report.data) {
+    	    	[ '@row.day', @row.hours, @row.ideal, @row.points ],
+    	    } 
+    	  ]);
+
+    	  // Create and draw the visualization.
+    	  var ac = new google.visualization.ComboChart(document.getElementById('chart_div-@report.project'));
+    	  ac.draw(data, {
+    		strictFirstColumnType: false,
+    	    title : 'burndown',
+    	    width: 600,
+    	    height: 400,
+    	    hAxis: {title: "Day"},
+    	    seriesType: "bars",
+    	    vAxes: {
+    	      0: {title: "Hours"},
+    	      1: {title: "Points"}
+    	    },
+    	    series: {
+    	      0: {targetAxisIndex: 0},
+    	      1: {type: "line",targetAxisIndex: 0},
+    	      2: {targetAxisIndex: 1},
+    	    }
+    	  });
+    	}
+	</script>    
+    <h1>@report.project @report.iteration</h1>
+    <div id="chart_div-@report.project"></div>
+}
