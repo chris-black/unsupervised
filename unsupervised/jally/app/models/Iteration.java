@@ -1,13 +1,17 @@
 package models;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.Lists;
 
+import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.*;
 
@@ -25,9 +29,15 @@ public class Iteration extends Model {
     @Constraints.Required
     public String name;
 
+    public String objId;
+    
     public Date iterationStart;
     
     public Date iterationEnd;
+    
+    public int totalPoints;
+    
+    public int totalHours;
     
     @ManyToOne
     public Team team;
@@ -35,11 +45,112 @@ public class Iteration extends Model {
     @OneToMany(cascade=CascadeType.ALL)
     public List<Burndown> burndowns;
     
+    public Iteration(serialized.Iteration src) {
+    	this.name = src.Name;
+    	this.objId= src.ObjectID;
+    	this.totalHours = 0;
+    	this.totalPoints = 0;
+    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    	try {
+			this.iterationStart = formatter.parse(src.StartDate);
+	    	this.iterationEnd = formatter.parse(src.EndDate);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(this.iterationEnd);
+			cal.add(Calendar.HOUR_OF_DAY, -24);
+			this.iterationEnd = cal.getTime();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	this.team = new Team(src.Project);
+    	this.team.iterations.add(this);
+    }
+    
+    public Iteration(String name) {
+    	this.name = name;
+    	this.burndowns = Lists.newArrayList();
+    }
+    
     /**
      * Business methods
      */
+    
+    public boolean reportable() {
+    	if (null == team.release) {
+    		return false;
+    	} else if (0  == totalHours || 0 == totalPoints) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
+    @Override
+    public boolean equals(Object dst) {
+    	if (this == dst) return true;
+    	if (null == dst) return false;
+    	if (!(dst instanceof Iteration)) return false;
+    	Iteration dstItr = (Iteration)dst;
+    	if (!StringUtils.equals(dstItr.objId, this.objId)) {
+    		return false;
+    	}
+    	return true;
+    }
+    /**
+     * If given burndown does not exist and fits then add to list and save
+     * TODO guava predicate to order and append
+     * @param burndown
+     */
+    public void merge(Iteration src) {
+    	// delegate to just merge in today's burndown
+    	mergeBurndownToday(src);
+    }
+    
+    protected void mergeBurndownToday(Iteration src) {
+    	Burndown srcToday = src.burndownToday();
+    	// run on another day ignores
+    	if (null == burndownToday() && null != srcToday) {
+    		srcToday.iteration = this;
+    		srcToday.save();
+    		burndowns.add(srcToday);
+    	}
+    }
+    
+    /**
+     * answer back the burndown matching given day
+     * 
+     * @param day
+     * @return
+     */
+    public Burndown burndownToday() {
+		Calendar rightNow = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		String day = formatter.format(rightNow.getTime());
 
+    	for (Burndown burndown : burndowns) {
+    		// todo comparitor
+    		if (StringUtils.equals(burndown.day, day)) {
+    			return burndown;
+    		}
+    	}
+    	return null;
+    }
 
+    public List<String> workdays() {
+    	List<String> dates = Lists.newArrayList();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(iterationStart);
+
+        while (calendar.getTime().before(iterationEnd)) {
+			if (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+				String day = formatter.format(calendar.getTime());
+				dates.add(day);
+			}
+            calendar.add(Calendar.DATE, 1);
+        }
+        return dates;
+    }
     /**
      * Generic query helper for entity Company with id Long
      */
@@ -55,7 +166,21 @@ public class Iteration extends Model {
      */
     public static List<Iteration> getTeamIterations() {
     	Calendar rightNow = Calendar.getInstance();
-    	return find.where().gt("iterationStart", rightNow.getTime()).le("iterationEnd", rightNow.getTime()).findList();
+    	rightNow.clear(Calendar.HOUR);
+    	rightNow.clear(Calendar.MINUTE);
+    	rightNow.clear(Calendar.SECOND);
+    	rightNow.clear(Calendar.MILLISECOND);
+    	return find.where().lt("iterationStart", rightNow.getTime()).ge("iterationEnd", rightNow.getTime()).findList();
     }
+    
+    /**
+     * Answer back iteration of given name
+     * 
+     * @param release
+     * @return
+     */
+    public static Iteration getByName(String name) {
+        return find.where().eq("name", name).findUnique();
+    }    
 }
 

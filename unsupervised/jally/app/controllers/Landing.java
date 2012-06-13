@@ -1,6 +1,6 @@
 package controllers;
 
-import models.Dashboard;
+import reports.Dashboard;
 import jobs.NotificationType;
 import jobs.RallyActor;
 import play.Logger;

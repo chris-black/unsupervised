@@ -1,6 +1,6 @@
-@(report: models.BurndownReport)
+@(report: reports.BurndownReport)
 
-@rcontainer(title="test") {
+@rcontainer(title="Burndown") {
     
    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
@@ -35,7 +35,7 @@
     	    seriesType: "bars",
     	    vAxes: {
     	      0: {title: "Hours"},
-    	      1: {title: "Points"}
+    	      1: {title: "Points", maxValue:"@report.pointsMax"}
     	    },
     	    series: {
     	      0: {targetAxisIndex: 0},

@@ -15,8 +15,11 @@ create table burndown (
 create table iteration (
   id                        bigint not null,
   name                      varchar(255),
+  obj_id                    varchar(255),
   iteration_start			timestamp,
   iteration_end 			timestamp,
+  total_hours               integer,
+  total_points              integer,
   team_id 	           		bigint,
   constraint pk_iteration primary key (id))
 ;
@@ -29,6 +32,7 @@ create table release (
 
 create table team (
   id                        bigint not null,
+  obj_id                    varchar(255),
   name                      varchar(255),
   release_id 	            bigint,
   constraint pk_team primary key (id))

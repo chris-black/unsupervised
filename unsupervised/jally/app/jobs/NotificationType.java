@@ -1,5 +1,5 @@
 package jobs;
 
 public enum NotificationType {
-	Email, Download, query
+	Email, Download, Query
 }

@@ -1,7 +1,6 @@
 package jobs;
 
-import models.Dashboard;
-import models.Report;
+import reports.Dashboard;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
@@ -30,13 +29,13 @@ public class RallyActor extends UntypedActor {
 				  // do the work
 				  new Notifier().byEmail(dashboard.generate());
 			  } else if (NotificationType.Download.equals(notifier)) {
-				  // do the work
 				  // response back to trigger
 				  sender().tell(new Dashboard("Grays").generate());
-			  } else if (NotificationType.query.equals(notifier)) {
-				  // query data
-				  new Sprint().addData("Grays");
-				  log.info("Completed scheduled job to query data");
+			  } else if (NotificationType.Query.equals(notifier)) {
+				  // do the work
+				  new Collector().snapshot();
+				  // response back to trigger
+				  sender().tell(new Dashboard("Grays").generate());
 			  } else {
 				  unhandled(notifier);
 			  }

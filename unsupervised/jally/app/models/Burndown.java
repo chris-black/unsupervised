@@ -1,12 +1,12 @@
 package models;
 
-import java.util.Calendar;
-import java.util.List;
+import java.util.Map;
 
 import javax.persistence.*;
 
+import com.google.common.collect.Maps;
+
 import play.db.ebean.*;
-import play.data.validation.*;
 
 
 /**
@@ -29,6 +29,25 @@ public class Burndown extends Model {
     
     @ManyToOne
     public Iteration iteration;
+    
+    public Burndown() {
+    }
+    
+    public Burndown(String day, Iteration iteration) {
+    	this.day = day;
+    	this.hours = 0;
+    	this.ideal = 0;
+    	this.points = 0;
+    	this.iteration = iteration;
+    }
+    
+    /**
+     * hook up this burndown to an iteration 
+     */
+    public void connect(Iteration parent) {
+    	parent.burndowns.add(this);
+    	this.iteration = parent;
+    }
     
     /**
      * Generic query helper for entity Company with id Long
@@ -62,5 +81,17 @@ public class Burndown extends Model {
     	return null;
     }
 
+    /**
+     * Answer back burndown of given day for an iteration
+     * 
+     * @param release
+     * @return
+     */
+    public static Burndown getByDay(String day, Iteration iteration) {
+		Map<String,Object> constraints = Maps.newHashMap();
+		constraints.put("day", day);
+		constraints.put("iteration_id", iteration.id);
+		return find.where().allEq(constraints).findUnique();
+    }
 }
 

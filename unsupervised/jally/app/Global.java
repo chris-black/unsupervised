@@ -18,7 +18,7 @@ public class Global extends GlobalSettings {
         Duration.Zero(),
         Duration.create(1, TimeUnit.MINUTES),
         ref, 
-        NotificationType.query
+        NotificationType.Query
     	);
 
   }  
