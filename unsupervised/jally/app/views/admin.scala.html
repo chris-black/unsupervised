@@ -1,0 +1,25 @@
+@(notifyForm: Form[Landing.Notify])
+
+@import helper._
+
+@main(title = "Metrics dashboard") {
+    
+    @form(action = routes.Landing.trigger, args = 'id -> "notifyForm") {
+        
+        @select(
+            field = notifyForm("notifier"), 
+            options = options(
+                "Email" -> "Email",
+                "Download" -> "Download",
+                "Query" -> "Query"
+            ),
+            args = '_label -> "Choose how you want report"
+        )
+        
+        <p class="buttons">
+            <input type="submit">
+        <p>
+        
+    }
+    
+}

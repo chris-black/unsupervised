@@ -29,8 +29,8 @@
     	  ac.draw(data, {
     		strictFirstColumnType: false,
     	    title : 'burndown',
-    	    width: 600,
-    	    height: 400,
+    	    width: 300,
+    	    height: 200,
     	    hAxis: {title: "Day"},
     	    seriesType: "bars",
     	    vAxes: {
@@ -45,6 +45,6 @@
     	  });
     	}
 	</script>    
-    <h1>@report.project @report.iteration</h1>
+    <h3>@report.project @report.iteration</h3>
     <div id="chart_div-@report.project"></div>
 }

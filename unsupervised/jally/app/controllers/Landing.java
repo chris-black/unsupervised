@@ -1,6 +1,7 @@
 package controllers;
 
 import reports.Dashboard;
+import jobs.DashboardType;
 import jobs.NotificationType;
 import jobs.RallyActor;
 import play.Logger;
@@ -38,13 +39,42 @@ public class Landing extends Controller {
 		public String notifier;
 	} 
     
-  
 	/**
-	 * Draw the trigger page
+	 * Draw the master dashboard page
 	 * @return
 	 */
-    public static Result index() {
-        return ok(index.render(form(Notify.class)));
+    public static Result dashboard() {
+    	return drawDashboard(DashboardType.Master);
+    }
+
+    /**
+     * Draw the scrum dashboard
+     * @return
+     */
+    public static Result scrum() {
+    	return drawDashboard(DashboardType.Scrum);
+    }
+    
+    private static Result drawDashboard(DashboardType notificationType) {
+		// set up Actor to do work
+		ActorRef worker = Akka.system().actorOf(new Props(RallyActor.class));
+		Future<Object> f = Patterns.ask(worker, notificationType, new Timeout(Duration.parse("10 seconds")));
+		// Play uses promise, Akka uses their own future
+		Promise<Object> p = Akka.asPromise(f);
+		// async return for promise of result
+		// promise comes from Function using anonymous method
+		return async(p.map(new Function<Object, Result>() {
+			public Result apply(Object response) {
+				if (response instanceof Dashboard) {
+					return ok(views.html.dashboard.render((Dashboard)response));
+				}
+				return redirect(routes.Landing.dashboard());
+			}
+		}));
+    }
+    
+    public static Result admin() {
+        return ok(admin.render(form(Notify.class)));
     }
 
     /**
@@ -56,7 +86,7 @@ public class Landing extends Controller {
 		Form<Notify> form = form(Notify.class).bindFromRequest();
 		Logger.info("notifier:"+form.get().notifier);
 		if (form.hasErrors()) {
-			return badRequest(index.render(form));
+			return badRequest(admin.render(form));
 		} else {
 			// set up Actor to do work
 			ActorRef worker = Akka.system().actorOf(new Props(RallyActor.class));
@@ -70,23 +100,10 @@ public class Landing extends Controller {
 					if (response instanceof Dashboard) {
 						return ok(views.html.dashboard.render((Dashboard)response));
 					}
-					return redirect(routes.Landing.index());
+					return redirect(routes.Landing.admin());
 				}
 			}));
 		}
-	}
-	
-	public static Result schedule() {
-		/**
-		ActorRef ref = Akka.system().actorOf(new Props(RallyActor.class));
-		    Akka.system().scheduler().schedule(
-		        Duration.Zero(),
-		        Duration.create(1, TimeUnit.MINUTES),
-		        ref, 
-		        NotificationType.query
-		    	);
-		 **/   
-		return ok("scheduled");
 	}
 
 }

@@ -1,9 +1,13 @@
 @(dashboard: reports.Dashboard)
 
-@main(title = "Rally Reporter") {
+@main(title = "Metrics dashboard") {
     
+    <div class="row">
     @for(report <- dashboard.reports) {
-       	@Html(report)
+	  	<div class="span4">
+	       	@Html(report)
+	  	</div>
     } 
+	</div>
     
 }

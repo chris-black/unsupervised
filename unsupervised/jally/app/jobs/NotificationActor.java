@@ -9,7 +9,7 @@ import akka.event.LoggingAdapter;
  * @author dlange
  *
  */
-public class RallyActor extends UntypedActor {
+public class NotificationActor extends UntypedActor {
 	  LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 	 
 	  /**
@@ -19,20 +19,28 @@ public class RallyActor extends UntypedActor {
 	   * report 
 	   * untyped with object interface seems to have its place here but need to clarify
 	   */
-	  public void onReceive(Object dashboardType) throws Exception {
-		  log.info("Received DashboardType: {}", dashboardType);
-		  if (dashboardType instanceof DashboardType) {
-			  if (DashboardType.Master.equals(dashboardType)) {
+	  public void onReceive(Object notificationType) throws Exception {
+		  log.info("Received notificationType: {}", notificationType);
+		  if (notificationType instanceof NotificationType) {
+			  if (NotificationType.Email.equals(notificationType)) {
+				  Dashboard dashboard = new Dashboard("Grays");
+				  // response back to trigger
+				  sender().tell(dashboard);
+				  // do the work
+				  new Notifier().byEmail(dashboard.generate());
+			  } else if (NotificationType.Download.equals(notificationType)) {
 				  // response back to trigger
 				  sender().tell(new Dashboard("Grays").generate());
-			  } else if (DashboardType.Scrum.equals(dashboardType)) {
+			  } else if (NotificationType.Query.equals(notificationType)) {
+				  // do the work
+				  new Collector().snapshot();
 				  // response back to trigger
 				  sender().tell(new Dashboard("Grays").generate());
 			  } else {
-				  unhandled(dashboardType);
+				  unhandled(notificationType);
 			  }
 		  } else {
-		    	unhandled(dashboardType);
+		    	unhandled(notificationType);
 		  }
 	  }
 }

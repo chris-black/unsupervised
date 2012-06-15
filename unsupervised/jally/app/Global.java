@@ -1,7 +1,7 @@
 import java.util.concurrent.TimeUnit;
 
 import jobs.NotificationType;
-import jobs.RallyActor;
+import jobs.NotificationActor;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.util.Duration;
@@ -13,10 +13,10 @@ public class Global extends GlobalSettings {
   @Override
   public void onStart(Application app) {
     Logger.info("Application has started");
-	ActorRef ref = Akka.system().actorOf(new Props(RallyActor.class));
+	ActorRef ref = Akka.system().actorOf(new Props(NotificationActor.class));
     Akka.system().scheduler().schedule(
         Duration.Zero(),
-        Duration.create(1, TimeUnit.MINUTES),
+        Duration.create(24, TimeUnit.HOURS),
         ref, 
         NotificationType.Query
     	);
