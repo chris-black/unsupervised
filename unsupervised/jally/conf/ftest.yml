@@ -1,0 +1,47 @@
+# Functional test data
+
+releases:
+
+    - !!models.Release
+        id:      11
+        name:    grays
+
+
+teams:
+
+    - !!models.Team
+        id:      11
+        name:    Red
+        release:    !!models.Release
+                        id: 11
+
+
+iterations:
+
+    - !!models.Iteration
+        id:      11
+        name:    2012/06/17
+        team:    !!models.Team
+                        id: 11
+ 
+
+burndowns:
+
+    - !!models.Burndown
+        id:      11
+        day:     2012/06/17
+        hours:   24
+        ideal:   30
+        points:  5
+        iteration:    !!models.Iteration
+                        id: 11
+    
+    - !!models.Burndown
+        id:      12
+        day:     2012/06/18
+        hours:   18
+        ideal:   15
+        points:  9
+        iteration:    !!models.Iteration
+                        id: 11
+    

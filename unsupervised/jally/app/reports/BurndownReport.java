@@ -1,4 +1,5 @@
 package reports;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,8 +9,6 @@ import com.google.common.collect.Lists;
 
 import models.Burndown;
 import models.Iteration;
-
-import play.Logger;
 
 
 /**

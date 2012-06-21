@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.*;
 import com.google.common.collect.Lists;
 
-import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.*;
 
@@ -75,7 +74,7 @@ public class Release extends Model {
     	return this.name;
     }
     /**
-     * Generic query helper for entity Company with id Long
+     * Generic query helper for entity Release with id Long
      */
     public static Model.Finder<Long,Release> find = new Model.Finder<Long,Release>(Long.class, Release.class);
 
@@ -85,7 +84,7 @@ public class Release extends Model {
     
     
     /**
-     * Answer back a list of scrum objects for a given release
+     * Answer back a list of release objects for a given release
      * 
      * @param release
      * @return

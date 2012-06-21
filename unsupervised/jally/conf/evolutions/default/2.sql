@@ -1,30 +1,24 @@
 # --- Sample dataset
 
 # --- !Ups
-insert into release (id,name) values (1, 'Grays');
+insert into scale (id,month,portal_goal,portal_actual,han_goal,han_actual) values ( 1,'2012-05-01', 16200, 16200, 800, 2000);
+insert into scale (id,month,portal_goal,portal_actual,han_goal,han_actual) values ( 2,'2012-06-01', 37800, 0, 1600, 0);
+insert into scale (id,month,portal_goal,portal_actual,han_goal,han_actual) values ( 3,'2012-07-01', 59400, 0, 2000, 0);
+insert into scale (id,month,portal_goal,portal_actual,han_goal,han_actual) values ( 4,'2012-08-01', 81000, 0, 2000, 0);
+insert into scale (id,month,portal_goal,portal_actual,han_goal,han_actual) values ( 5,'2012-09-01', 117000, 0, 4500, 0);
+insert into scale (id,month,portal_goal,portal_actual,han_goal,han_actual) values ( 6,'2012-10-01', 153000, 0, 7000, 0);
+insert into scale (id,month,portal_goal,portal_actual,han_goal,han_actual) values ( 7,'2012-11-01', 189000, 0, 1200, 0);
+insert into scale (id,month,portal_goal,portal_actual,han_goal,han_actual) values ( 8,'2012-12-01', 225000, 0, 1700, 0);
 
-insert into team (id,name,release_id) values ( 1,'Energize',1);
-insert into team (id,name,release_id) values ( 2,'Enterprise',1);
-insert into team (id,name,release_id) values ( 3,'HER',1);
 
-insert into iteration (id,name,iteration_start,iteration_end,team_id) values (1,'2012-05-21','2012-05-21','2012-06-01', 1);
-insert into iteration (id,name,iteration_start,iteration_end,team_id) values (2,'2012-05-21','2012-05-21','2012-06-01', 2);
-insert into iteration (id,name,iteration_start,iteration_end,team_id) values (3,'2012-05-21','2012-05-21','2012-06-01', 3);
-
-insert into burndown (id,day,hours,ideal,points,iteration_id) values (  1,'2012-05-21', 120, 120, 0, 1);
-insert into burndown (id,day,hours,ideal,points,iteration_id) values (  2,'2012-05-22', 103, 90, 4, 1);
-insert into burndown (id,day,hours,ideal,points,iteration_id) values (  3,'2012-05-23', 81, 60, 12, 1);
-insert into burndown (id,day,hours,ideal,points,iteration_id) values (  4,'2012-05-24', 38, 30, 16, 1);
-
-insert into burndown (id,day,hours,ideal,points,iteration_id) values (  5,'2012-05-21', 120, 120, 0, 2);
-insert into burndown (id,day,hours,ideal,points,iteration_id) values (  6,'2012-05-22', 109, 90, 3, 2);
-insert into burndown (id,day,hours,ideal,points,iteration_id) values (  7,'2012-05-23', 77, 60, 17, 2);
-insert into burndown (id,day,hours,ideal,points,iteration_id) values (  8,'2012-05-24', 12, 30, 30, 2);
-
-insert into burndown (id,day,hours,ideal,points,iteration_id) values (  9,'2012-05-21', 120, 120, 0, 3);
-insert into burndown (id,day,hours,ideal,points,iteration_id) values ( 10,'2012-05-22', 94, 90, 14, 3);
-insert into burndown (id,day,hours,ideal,points,iteration_id) values ( 11,'2012-05-23', 30, 60, 22, 3);
-insert into burndown (id,day,hours,ideal,points,iteration_id) values ( 12,'2012-05-24', 7, 30, 29, 3);
+insert into service (id,month,percent_complete,avg_throughput) values ( 1,'2012-05-01', 0, 200);
+insert into service (id,month,percent_complete,avg_throughput) values ( 2,'2012-06-01', 10, 0);
+insert into service (id,month,percent_complete,avg_throughput) values ( 3,'2012-07-01', 0, 0);
+insert into service (id,month,percent_complete,avg_throughput) values ( 4,'2012-08-01', 0, 0);
+insert into service (id,month,percent_complete,avg_throughput) values ( 5,'2012-09-01', 0, 0);
+insert into service (id,month,percent_complete,avg_throughput) values ( 6,'2012-10-01', 0, 0);
+insert into service (id,month,percent_complete,avg_throughput) values ( 7,'2012-11-01', 0, 0);
+insert into service (id,month,percent_complete,avg_throughput) values ( 8,'2012-12-01', 0, 0);
 
 # --- !Downs
 
@@ -32,3 +26,5 @@ delete from burndown;
 delete from iteration;
 delete from team;
 delete from release;
+delete from scale;
+delete from service;

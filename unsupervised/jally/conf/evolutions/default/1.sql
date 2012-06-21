@@ -38,10 +38,30 @@ create table team (
   constraint pk_team primary key (id))
 ;
 
+create table scale (
+  id                        bigint not null,
+  month						timestamp,
+  portal_goal               integer,
+  portal_actual             integer,
+  han_goal      	         integer,
+  han_actual 	            integer,
+  constraint pk_scale primary key (id))
+;
+
+create table service (
+  id                        bigint not null,
+  month						timestamp,
+  percent_complete          integer,
+  avg_throughput            integer,
+  constraint pk_service primary key (id))
+;
+
 create sequence burndown_seq start 1000;
 create sequence iteration_seq start 1000;
 create sequence release_seq start 1000;
 create sequence team_seq start 1000;
+create sequence scale_seq start 1000;
+create sequence service_seq start 1000;
 
 alter table team add constraint fk_team_release_1 foreign key (release_id) references release (id) on delete restrict on update restrict;
 alter table iteration add constraint fk_iteration_team_1 foreign key (team_id) references team (id) on delete restrict on update restrict;
@@ -56,6 +76,8 @@ drop table if exists burndown;
 drop table if exists iteration;
 drop table if exists release;
 drop table if exists team;
+drop table if exists scale;
+drop table if exists service;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 
@@ -63,3 +85,5 @@ drop sequence if exists burndown_seq;
 drop sequence if exists iteration_seq;
 drop sequence if exists release_seq;
 drop sequence if exists team_seq;
+drop sequence if exists scale_seq;
+drop sequence if exists service_seq;

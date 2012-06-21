@@ -41,7 +41,49 @@ public class Burndown extends Model {
     	this.iteration = iteration;
     }
     
-    /**
+    
+    
+    public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getDay() {
+		return day;
+	}
+
+	public void setDay(String day) {
+		this.day = day;
+	}
+
+	public int getHours() {
+		return hours;
+	}
+
+	public void setHours(int hours) {
+		this.hours = hours;
+	}
+
+	public int getIdeal() {
+		return ideal;
+	}
+
+	public void setIdeal(int ideal) {
+		this.ideal = ideal;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
+	}
+
+	/**
      * hook up this burndown to an iteration 
      */
     public void connect(Iteration parent) {
@@ -50,7 +92,7 @@ public class Burndown extends Model {
     }
     
     /**
-     * Generic query helper for entity Company with id Long
+     * Generic query helper for entity Burndown with id Long
      */
     public static Model.Finder<Long,Burndown> find = new Model.Finder<Long,Burndown>(Long.class, Burndown.class);
 
@@ -58,29 +100,6 @@ public class Burndown extends Model {
      * Static query methods
      */
     
-    
-    /**
-     * Answer back the latest day burndown for a given project/iteration
-     * 
-     * @param project
-     * @param iteration
-     * @return
-     */
-    public static Burndown findLatestByProjectIteration(String project) {
-    	return null;
-//        return find.where().eq("project", project).orderBy("day desc").findList().get(0);
-    }
-    
-    /**
-     * Go through all burndowns looking for matching iteration
-     * 
-     * @param project
-     * @return
-     */
-    public static Burndown findCurrentByProjectIteration(String project) {
-    	return null;
-    }
-
     /**
      * Answer back burndown of given day for an iteration
      * 

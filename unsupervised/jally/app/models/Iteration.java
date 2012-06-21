@@ -11,7 +11,6 @@ import javax.persistence.*;
 import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.Lists;
 
-import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.*;
 
@@ -102,11 +101,6 @@ public class Iteration extends Model {
      * @param burndown
      */
     public void merge(Iteration src) {
-    	// delegate to just merge in today's burndown
-    	mergeBurndownToday(src);
-    }
-    
-    protected void mergeBurndownToday(Iteration src) {
     	Burndown srcToday = src.burndownToday();
     	// run on another day ignores
     	if (null == burndownToday() && null != srcToday) {
@@ -115,6 +109,7 @@ public class Iteration extends Model {
     		burndowns.add(srcToday);
     	}
     }
+    
     
     /**
      * answer back the burndown matching given day
@@ -152,7 +147,7 @@ public class Iteration extends Model {
         return dates;
     }
     /**
-     * Generic query helper for entity Company with id Long
+     * Generic query helper for entity Iteration with id Long
      */
     public static Model.Finder<Long,Iteration> find = new Model.Finder<Long,Iteration>(Long.class, Iteration.class);
 

@@ -1,25 +1,50 @@
-@(notifyForm: Form[Landing.Notify])
+@(report: reports.ScaleReport, service: reports.ServiceReport)
 
 @import helper._
 
 @main(title = "Metrics dashboard") {
-    
-    @form(action = routes.Landing.trigger, args = 'id -> "notifyForm") {
-        
-        @select(
-            field = notifyForm("notifier"), 
-            options = options(
-                "Email" -> "Email",
-                "Download" -> "Download",
-                "Query" -> "Query"
-            ),
-            args = '_label -> "Choose how you want report"
-        )
-        
-        <p class="buttons">
-            <input type="submit">
-        <p>
-        
-    }
-    
+	
+	@flash.get("result")
+
+    <h3>Scale Metrics</h3>
+    <table class="table table-striped table-condensed">
+    	<thead>
+    		<tr>	
+    			<th>Date</th><th>Portal Goal</th><th>Portal Actual</th><th>Han Goal</th><th>Han Actual</th>
+    		</tr>
+    	</thead>
+    	<tbody>
+	@for(row <- report.data) {
+    		<tr>
+    			<td>@row.month.format("yyyy/MM")</td>
+    			<td>@row.portalGoal</td>
+    			<td>@row.portalActual</td>
+    			<td>@row.hanGoal</td>
+    			<td>@row.hanActual</td>
+    			<td><a class="btn btn-success" href="/scale/@row.id"><i class="icon-edit"> </i> Edit </a></td>
+    		</tr>
+	} 
+    	</tbody>
+    </table>
+    <h3>Services Metrics</h3>
+    <table class="table table-striped table-condensed">
+    	<thead>
+    		<tr>	
+    			<th>Date</th><th>% Complete</th><th>Avg Throughput</th>
+    		</tr>
+    	</thead>
+    	<tbody>
+	@for(row <- service.data) {
+    		<tr>
+    			<td>@row.month.format("yyyy/MM")</td>
+    			<td>@row.percentComplete</td>
+    			<td>@row.avgThroughput</td>
+    			<td><a class="btn btn-success" href="/service/@row.id"><i class="icon-edit"> </i> Edit </a></td>
+    		</tr>
+	} 
+    	</tbody>
+    </table>
+    <p>
+    	<a class="btn btn-success" href="/rally"><i class="icon-edit"> </i> Refresh Rally </a>
+    </p>
 }

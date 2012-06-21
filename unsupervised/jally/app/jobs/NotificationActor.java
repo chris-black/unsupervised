@@ -5,7 +5,7 @@ import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 /**
- * Actor for collecting responses from a series of web service calls
+ * Actor for performing various notifications
  * @author dlange
  *
  */
@@ -23,19 +23,20 @@ public class NotificationActor extends UntypedActor {
 		  log.info("Received notificationType: {}", notificationType);
 		  if (notificationType instanceof NotificationType) {
 			  if (NotificationType.Email.equals(notificationType)) {
-				  Dashboard dashboard = new Dashboard("Grays");
+				  Dashboard dashboard = new Dashboard(DashboardType.Scrum);
+				  String recipient = "bademail";
 				  // response back to trigger
 				  sender().tell(dashboard);
 				  // do the work
-				  new Notifier().byEmail(dashboard.generate());
+				  new Notifier().byEmail(dashboard.generate(), recipient);
 			  } else if (NotificationType.Download.equals(notificationType)) {
 				  // response back to trigger
-				  sender().tell(new Dashboard("Grays").generate());
+				  sender().tell(new Dashboard(DashboardType.Master).generate());
 			  } else if (NotificationType.Query.equals(notificationType)) {
+				  // response back to trigger
+				  sender().tell("ok");
 				  // do the work
 				  new Collector().snapshot();
-				  // response back to trigger
-				  sender().tell(new Dashboard("Grays").generate());
 			  } else {
 				  unhandled(notificationType);
 			  }

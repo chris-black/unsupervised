@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
 
-import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.*;
 
@@ -100,7 +99,7 @@ public class Team extends Model {
     }
     
     /**
-     * Generic query helper for entity Company with id Long
+     * Generic query helper for entity Team with id Long
      */
     public static Model.Finder<Long,Team> find = new Model.Finder<Long,Team>(Long.class, Team.class);
 

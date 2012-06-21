@@ -22,7 +22,6 @@ import com.google.common.collect.Maps;
 import models.Burndown;
 import models.Iteration;
 import models.Release;
-import models.Team;
 import play.Logger;
 import play.Play;
 import play.libs.WS;
@@ -76,7 +75,7 @@ public class Collector {
 		Map<String,String> params = Maps.newHashMap();
 		params.put("query", query);
 		params.put("fetch", "true");
-		params.put("pageSize", "100");
+		params.put("pageSize", "200");
 		return params;
 	}
 	

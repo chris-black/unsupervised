@@ -4,8 +4,12 @@
 # Landing page
 GET     /                           controllers.Landing.dashboard()
 GET     /scrum                      controllers.Landing.scrum()
-GET     /admin                      controllers.Landing.admin()
-POST    /trigger                    controllers.Landing.trigger()
+GET     /admin                      controllers.Admin.index()
+GET     /scale/:id                  controllers.Admin.showScale(id: Long)
+POST    /scale/:id                  controllers.Admin.updateScale(id: Long)
+GET     /service/:id                controllers.Admin.showService(id: Long)
+POST    /service/:id                controllers.Admin.updateService(id: Long)
+GET     /rally                      controllers.Admin.refreshRally()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

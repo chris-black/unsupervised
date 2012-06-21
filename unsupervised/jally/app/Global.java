@@ -1,5 +1,7 @@
 import java.util.concurrent.TimeUnit;
 
+import models.Release;
+
 import jobs.NotificationType;
 import jobs.NotificationActor;
 import akka.actor.ActorRef;
@@ -13,14 +15,15 @@ public class Global extends GlobalSettings {
   @Override
   public void onStart(Application app) {
     Logger.info("Application has started");
-	ActorRef ref = Akka.system().actorOf(new Props(NotificationActor.class));
-    Akka.system().scheduler().schedule(
-        Duration.Zero(),
-        Duration.create(24, TimeUnit.HOURS),
-        ref, 
-        NotificationType.Query
-    	);
-
+    if (Release.find.all().size() > 0) {
+    	ActorRef ref = Akka.system().actorOf(new Props(NotificationActor.class));
+        Akka.system().scheduler().schedule(
+                Duration.Zero(),
+                Duration.create(24, TimeUnit.HOURS),
+                ref, 
+                NotificationType.Query
+            	);
+    }
   }  
   
   @Override

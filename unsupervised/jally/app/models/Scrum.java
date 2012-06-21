@@ -26,7 +26,7 @@ public class Scrum extends Model {
     
     
     /**
-     * Generic query helper for entity Company with id Long
+     * Generic query helper for entity Scrum with id Long
      */
     public static Model.Finder<Long,Scrum> find = new Model.Finder<Long,Scrum>(Long.class, Scrum.class);
 
