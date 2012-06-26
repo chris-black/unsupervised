@@ -11,6 +11,7 @@ import javax.persistence.*;
 import org.apache.commons.lang.StringUtils;
 import com.google.common.collect.Lists;
 
+import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.*;
 
@@ -109,7 +110,17 @@ public class Iteration extends Model {
     		burndowns.add(srcToday);
     	}
     }
-    
+
+    public void addBurndown(Burndown dst) {
+    	Logger.info("Iteration.addBurndown iteration.id:"+this.id+"  day:"+dst.day+" hrs:"+dst.hours);
+    	dst.iteration = this;
+    	dst.save();
+//    	burndowns.add(dst);
+    	for (Burndown bd: burndowns) {
+    		Logger.info("BD:"+bd.day+" hr:"+bd.hours);
+    	}
+//    	update();
+    }
     
     /**
      * answer back the burndown matching given day
@@ -119,21 +130,24 @@ public class Iteration extends Model {
      */
     public Burndown burndownToday() {
 		Calendar rightNow = Calendar.getInstance();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
 		String day = formatter.format(rightNow.getTime());
+		return hasBurndownForDay(day);
+    }
 
+    public Burndown hasBurndownForDay(String day) {
     	for (Burndown burndown : burndowns) {
-    		// todo comparitor
+    		// TODO comparitor
     		if (StringUtils.equals(burndown.day, day)) {
     			return burndown;
     		}
     	}
     	return null;
     }
-
+    
     public List<String> workdays() {
     	List<String> dates = Lists.newArrayList();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(iterationStart);
 
@@ -165,7 +179,13 @@ public class Iteration extends Model {
     	rightNow.clear(Calendar.MINUTE);
     	rightNow.clear(Calendar.SECOND);
     	rightNow.clear(Calendar.MILLISECOND);
-    	return find.where().lt("iterationStart", rightNow.getTime()).ge("iterationEnd", rightNow.getTime()).findList();
+    	List<Iteration> iterations = find.where().lt("iterationStart", rightNow.getTime()).ge("iterationEnd", rightNow.getTime()).findList();
+    	// load teams
+    	String name;
+    	for (Iteration iter : iterations) {
+    		name = iter.team.name;
+    	}
+    	return iterations;
     }
     
     /**

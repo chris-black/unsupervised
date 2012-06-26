@@ -16,21 +16,21 @@
       // draws it.
       function drawVisualization() {
 
+
 		  // Create and populate the data table.
 		  var data = google.visualization.arrayToDataTable([
-		    ['month', 'complete'],
+		    ['Month', 'Goal', 'Actual'],
 
 	   	    @for(row <- report.data) {
-    	    	[ '@row.month.format("yyyy/MM")', @row.percentComplete ],
+    	    	[ '@row.month.format("yyyy/MM")', @row.percentGoal, @row.percentComplete ],
     	    } 
 		    
 		  ]);
 
 		  // Create and draw the visualization.
-		  new google.visualization.LineChart(document.getElementById('chart_div-@report.title')).
-		      draw(data, {width: 300, height: 200,
-		                  vAxis: {minValue: 0, maxValue: 100, title: "% Complete"}}
-		          );
+		  new google.visualization.ColumnChart(document.getElementById('chart_div-@report.title')).
+		      draw(data, {legend: {position: 'top'}, width:300, height:200} );
+
 
     	}
 	</script>    

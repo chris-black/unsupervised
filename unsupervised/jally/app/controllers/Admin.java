@@ -2,6 +2,8 @@ package controllers;
 
 import java.util.List;
 
+import models.Burndown;
+import models.Iteration;
 import models.Scale;
 import models.Service;
 import reports.ScaleReport;
@@ -31,7 +33,8 @@ public class Admin extends Controller {
     public static Result index() {
 		List<Scale> scaleData = Scale.all();
 		List<Service> serviceData = Service.all();
-        return ok(admin.render((ScaleReport)(new ScaleReport("Portal", scaleData).generate()),(ServiceReport)(new ServiceReport("Services", serviceData).generate())));
+		List<Iteration> iterations = Iteration.getTeamIterations();
+        return ok(admin.render((ScaleReport)(new ScaleReport("Portal", scaleData).generate()),(ServiceReport)(new ServiceReport("Services", serviceData).generate()),iterations));
     }
 
     public static Result showScale(Long id) {
@@ -59,7 +62,21 @@ public class Admin extends Controller {
 		updated.update(id);
     	return redirect("/admin");
     }
+    
+    public static Result showBurndown(Long id) {
+    	Iteration iteration = Iteration.find.byId(id);
+    	String name = iteration.team.name;
+    	return ok(addburndown.render(iteration, form(Burndown.class)));
+    }
 
+    public static Result addBurndown(Long id) {
+    	Form<Burndown> form = form(Burndown.class).bindFromRequest();
+    	Iteration iteration = Iteration.find.byId(id);
+    	Burndown added = form.get();
+    	iteration.addBurndown(added);
+    	return redirect("/admin");
+    }
+    
     public static Result refreshRally() {
 		// set up Actor to do work
 		ActorRef worker = Akka.system().actorOf(new Props(NotificationActor.class));

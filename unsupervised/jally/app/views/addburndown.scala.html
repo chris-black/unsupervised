@@ -1,0 +1,28 @@
+@(iteration: models.Iteration, burndownForm: Form[models.Burndown])
+
+@import helper._
+
+@main(title = "Add burndown") {
+    
+    @form(action = routes.Admin.addBurndown(iteration.id), args = 'id -> "burndownForm") {
+
+	@iteration.team.name @iteration.name    
+    <table class="table table-striped table-condensed" >
+    	<tbody>
+    		<tr>
+    			<td>
+    			@inputText(burndownForm("day"))
+    			</td>
+    			<td>
+    			@inputText(burndownForm("hours"))
+				</td>    			
+    			<td>
+    			@inputText(burndownForm("points"))
+				</td>    			
+    			<td><button type="submit" class="btn"><i class="icon-edit"> </i>Update</button>
+    			</td>
+    		</tr>
+    	</tbody>
+    </table>
+    }
+}

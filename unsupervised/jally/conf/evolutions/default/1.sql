@@ -52,7 +52,9 @@ create table service (
   id                        bigint not null,
   month						timestamp,
   percent_complete          integer,
+  percent_goal		        integer,
   avg_throughput            integer,
+  throughput_goal           integer,
   constraint pk_service primary key (id))
 ;
 

@@ -1,5 +1,7 @@
 package models;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Map;
 
 import javax.persistence.*;
@@ -29,10 +31,18 @@ public class Burndown extends Model {
     
     @ManyToOne
     public Iteration iteration;
-    
+
+	private SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
+
     public Burndown() {
+    	this.day = today();
     }
     
+	private String today() {
+		Calendar rightNow = Calendar.getInstance();
+		return formatter.format(rightNow.getTime());
+	}
+
     public Burndown(String day, Iteration iteration) {
     	this.day = day;
     	this.hours = 0;

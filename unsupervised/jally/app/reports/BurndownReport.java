@@ -1,8 +1,5 @@
 package reports;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -41,29 +38,14 @@ public class BurndownReport extends Report {
 	}
 	
 	private List<Burndown> backfill(Iteration iteration) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		List<Burndown> filled = Lists.newArrayList();
 		for (String day : iteration.workdays()) {
-			try {
-				Date dayTime = formatter.parse(day);
-				boolean added = false;
-				for (Burndown burndown : iteration.burndowns) {
-					Date burndownTime = formatter.parse(burndown.day);
-					if (burndownTime.after(dayTime)) {
-						filled.add(new Burndown(day, iteration));
-						added = true;
-					} else if (burndownTime.equals(dayTime)) {
-						filled.add(burndown);
-						added = true;
-					}
-				}
-				if (!added) {
-					filled.add(new Burndown(day, iteration));
-				}
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// fill in gaps with nuthin
+			Burndown burndown = iteration.hasBurndownForDay(day);
+			if (null == burndown) {
+				burndown = new Burndown(day, iteration);
+			} 
+			filled.add(burndown);
 		}
 		// fill in ideal based on total hrs
 		int topline = iteration.totalHours;

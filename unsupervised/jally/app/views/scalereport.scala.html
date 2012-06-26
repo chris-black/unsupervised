@@ -34,11 +34,7 @@
 
 		  // Create and draw the visualization.
 		  new google.visualization.ColumnChart(document.getElementById('chart_div-@report.title')).
-		      draw(data,
-		           {title:"scale @report.title",
-		            width:300, height:200,
-		            hAxis: {title: "Year"}}
-		      );
+		      draw(data, {legend: {position: 'top'}, width:300, height:200   }    );
 
     	}
 	</script>    

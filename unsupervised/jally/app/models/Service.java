@@ -23,7 +23,11 @@ public class Service extends Model {
     
     public int percentComplete;
     
+    public int percentGoal;
+    
     public int avgThroughput;
+    
+    public int throughputGoal;
     
     public Service() {
     }

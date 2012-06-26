@@ -9,6 +9,8 @@ GET     /scale/:id                  controllers.Admin.showScale(id: Long)
 POST    /scale/:id                  controllers.Admin.updateScale(id: Long)
 GET     /service/:id                controllers.Admin.showService(id: Long)
 POST    /service/:id                controllers.Admin.updateService(id: Long)
+GET     /burndown/:id               controllers.Admin.showBurndown(id: Long)
+POST    /burndown/:id               controllers.Admin.addBurndown(id: Long)
 GET     /rally                      controllers.Admin.refreshRally()
 
 # Map static resources from the /public folder to the /assets URL path

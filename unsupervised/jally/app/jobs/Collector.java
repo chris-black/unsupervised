@@ -133,7 +133,6 @@ public class Collector {
 			// sum up points hrs etc
 			Iteration iteration = new Iteration(serializedIteration);
 			Burndown burndown = new Burndown();
-			burndown.day = today();
 			burndown.connect(iteration);
 			for (serialized.HierarchicalRequirement story : results.QueryResult.Results) {
 				iteration.totalPoints += story.PlanEstimate;
