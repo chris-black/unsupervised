@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
 
+import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.*;
 
@@ -51,12 +52,14 @@ public class Team extends Model {
     public void merge(Team src) {
     	for (Iteration srcIteration : src.iterations) {
     		Iteration exists = matching(srcIteration);
+    		Logger.info("Team:merge srcIter:"+srcIteration.name+" exists:"+exists);
     		if (null != exists) {
     			exists.merge(srcIteration);
     		} else {
     			srcIteration.team = this;
     			iterations.add(srcIteration);
     			srcIteration.save();
+    			Logger.info("  Iteration did not exist, added to release:"+srcIteration.name);
     		}
     	}
     }

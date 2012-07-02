@@ -108,6 +108,7 @@ public class Iteration extends Model {
     		srcToday.iteration = this;
     		srcToday.save();
     		burndowns.add(srcToday);
+    		Logger.info("Iteration:merge add burndown:"+srcToday.day);
     	}
     }
 

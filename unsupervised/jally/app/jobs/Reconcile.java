@@ -1,5 +1,6 @@
 package jobs;
 
+import play.Logger;
 import models.Release;
 
 public class Reconcile {
@@ -18,6 +19,7 @@ public class Reconcile {
 		} else {
 			// simple- cascade save
 			release.save();
+			Logger.info("Saved new release:"+release.name);
 		}
 	}
 }

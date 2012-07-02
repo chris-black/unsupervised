@@ -92,8 +92,9 @@ public class Collector {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.getDeserializationConfig().disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 		Map<String,serialized.Iteration> teams = Maps.newHashMap();
-		ResultFromJson results = mapper.readValue(singleQuery(iterationBase, queryParams("((StartDate < \""+today()+"\") AND (EndDate > \""+today()+"\"))")), ResultFromJson.class);
+		ResultFromJson results = mapper.readValue(singleQuery(iterationBase, queryParams("((StartDate <= \""+today()+"\") AND (EndDate >= \""+today()+"\"))")), ResultFromJson.class);
 		for (serialized.Iteration srcIter : results.QueryResult.Results) {
+			Logger.info("Collector:queryOverlap got Iteration:"+srcIter.Name);
 			if (teams.containsKey(srcIter.Project._ref)) {
 				// keep later iteration (multiple iterations per team)
 				serialized.Iteration existing = teams.get(srcIter.Project._ref);
@@ -223,13 +224,16 @@ public class Collector {
 	}
 	
 	protected String singleQuery(String query, Map<String,String> params) {
+		Logger.info("query:"+query);
 		WSRequestHolder req = WS.url((String)query);
 		// add params
 		for (String key : params.keySet()) {
 			req.setQueryParameter(key, params.get(key));
 		}
 		final Promise<Response> remoteCall = req.setAuth(getUser(), getPassword(), com.ning.http.client.Realm.AuthScheme.BASIC).get();
-		return remoteCall.get().getBody();
+		String res = remoteCall.get().getBody();
+//		Logger.info("response:"+res);
+		return res;
 	}
 	
 	protected List<String> multipleQuery(List<String> urls) {

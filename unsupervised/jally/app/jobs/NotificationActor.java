@@ -35,6 +35,7 @@ public class NotificationActor extends UntypedActor {
 			  } else if (NotificationType.Query.equals(notificationType)) {
 				  // response back to trigger
 				  sender().tell("ok");
+				  log.info("Sent msg");
 				  // do the work
 				  new Collector().snapshot();
 			  } else {

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.*;
 import com.google.common.collect.Lists;
 
+import play.Logger;
 import play.db.ebean.*;
 import play.data.validation.*;
 
@@ -51,12 +52,14 @@ public class Release extends Model {
     public void merge(Release src) {
     	for (Team srcTeam : src.teams) {
     		Team exists = matching(srcTeam);
+    		Logger.info("Release:merge team:"+srcTeam.name+" exists:"+exists);
     		if (null != exists) {
     			exists.merge(srcTeam);
     		} else {
     			srcTeam.release = this;
     			teams.add(srcTeam);
     			srcTeam.save();
+    			Logger.info("  Team did not exist, added to release:"+srcTeam.name);
     		}
     	}
     }
