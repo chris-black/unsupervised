@@ -30,6 +30,7 @@ import play.libs.F.Promise;
 import play.libs.WS.Response;
 import play.libs.WS.WSRequestHolder;
 import serialized.ResultFromJson;
+import serialized.ResultFromJsonDefect;
 import serialized.ResultFromJsonStory;
 
 /**
@@ -44,6 +45,7 @@ public class Collector {
 	// some queries
 	private String iterationBase = "https://rally1.rallydev.com/slm/webservice/1.34/iteration.js";
 	private String storyBase = "https://rally1.rallydev.com/slm/webservice/1.34/hierarchicalrequirement.js";
+	private String defectBase = "https://rally1.rallydev.com/slm/webservice/1.34/defect.js";
 
 	
 	public void snapshot() throws JsonParseException, JsonMappingException, IOException {
@@ -129,12 +131,16 @@ public class Collector {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.getDeserializationConfig().disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 			// TODO use multipleQuery
+			// TODO use fetch=parmname,paramname,paramname.. to select data
 			ResultFromJsonStory results = mapper.readValue(singleQuery(storyBase, queryParams(iterationName)), ResultFromJsonStory.class);
+			ResultFromJsonDefect defectResults = mapper.readValue(singleQuery(defectBase, queryParams(iterationName)), ResultFromJsonDefect.class);
 			
 			// sum up points hrs etc
 			Iteration iteration = new Iteration(serializedIteration);
 			Burndown burndown = new Burndown();
 			burndown.connect(iteration);
+			
+			// add story info
 			for (serialized.HierarchicalRequirement story : results.QueryResult.Results) {
 				iteration.totalPoints += story.PlanEstimate;
 				iteration.totalHours += story.TaskEstimateTotal;
@@ -143,6 +149,16 @@ public class Collector {
 				}
 				burndown.hours += story.TaskRemainingTotal;
 			}
+			// add defect info only if there are points?
+			for (serialized.Defect defect : defectResults.QueryResult.Results) {
+				iteration.totalPoints += defect.PlanEstimate;
+				iteration.totalHours += defect.TaskEstimateTotal;
+				if (StringUtils.equalsIgnoreCase(defect.ScheduleState, "Accepted")) {
+					burndown.points += defect.PlanEstimate;
+				}
+				burndown.hours += defect.TaskRemainingTotal;
+			}
+			
 			// hook in story release to iteraton's team
 			Release iterationRelease = inflateParent(results, iteration);
 			if (null != iterationRelease) {

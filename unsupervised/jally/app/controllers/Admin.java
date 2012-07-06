@@ -10,7 +10,6 @@ import reports.ScaleReport;
 import reports.ServiceReport;
 import jobs.NotificationActor;
 import jobs.NotificationType;
-import play.Logger;
 import play.data.Form;
 import play.libs.Akka;
 import play.libs.F.Function;
@@ -33,7 +32,7 @@ public class Admin extends Controller {
     public static Result index() {
 		List<Scale> scaleData = Scale.all();
 		List<Service> serviceData = Service.all();
-		List<Iteration> iterations = Iteration.getTeamIterations();
+		List<Iteration> iterations = Iteration.getTeamIterationsToday();
         return ok(admin.render((ScaleReport)(new ScaleReport("Portal", scaleData).generate()),(ServiceReport)(new ServiceReport("Services", serviceData).generate()),iterations));
     }
 

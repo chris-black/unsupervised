@@ -2,6 +2,8 @@ package reports;
 
 import java.util.List;
 
+import play.Logger;
+
 import jobs.DashboardType;
 
 import models.Iteration;
@@ -68,8 +70,10 @@ public class Dashboard {
 
 	private List<String> generateBurndowns() {
 		List<String> burndowns = Lists.newArrayList();
-		List<Iteration> iterations = Iteration.getTeamIterations();
+		List<Iteration> iterations = Iteration.getTeamIterationsToday();
+		Logger.info("num reports:"+iterations.size());
 		for (Iteration iteration : iterations) {
+			Logger.info("generateBurndown for "+iteration.team.name);
 			burndowns.add(new BurndownReport(iteration).generate().htmlReport);
 		}
 		return burndowns;

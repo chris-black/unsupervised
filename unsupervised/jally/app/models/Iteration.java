@@ -171,24 +171,45 @@ public class Iteration extends Model {
      */
 
     /**
-     * Answer back matching Iterations
+     * Answer back matching Iterations overlapping today
      * @return
      */
-    public static List<Iteration> getTeamIterations() {
+    public static List<Iteration> getTeamIterationsToday() {
     	Calendar rightNow = Calendar.getInstance();
     	rightNow.clear(Calendar.HOUR);
     	rightNow.clear(Calendar.MINUTE);
     	rightNow.clear(Calendar.SECOND);
     	rightNow.clear(Calendar.MILLISECOND);
-    	List<Iteration> iterations = find.where().lt("iterationStart", rightNow.getTime()).ge("iterationEnd", rightNow.getTime()).findList();
-    	// load teams
-    	String name;
+    	return getTeamIterationsOn(rightNow.getTime());
+    }
+
+    /**
+     * Answer back matching Iterations overlapping last sprint
+     * @return
+     */
+    public static List<Iteration> getTeamIterationsLastSprint() {
+    	Calendar previousSprint = Calendar.getInstance();
+    	previousSprint.clear(Calendar.HOUR);
+    	previousSprint.clear(Calendar.MINUTE);
+    	previousSprint.clear(Calendar.SECOND);
+    	previousSprint.clear(Calendar.MILLISECOND);
+    	previousSprint.add(Calendar.DAY_OF_YEAR, 14);
+    	return getTeamIterationsOn(previousSprint.getTime());
+    }
+
+    /**
+     * Answer back matching Iterations
+     * @return
+     */
+    public static List<Iteration> getTeamIterationsOn(Date iterationDate) {
+    	List<Iteration> iterations = find.where().lt("iterationStart", iterationDate).ge("iterationEnd", iterationDate).findList();
+    	// eager load teams
     	for (Iteration iter : iterations) {
-    		name = iter.team.name;
+    		String name = iter.team.name;
     	}
     	return iterations;
     }
-    
+ 
     /**
      * Answer back iteration of given name
      * 
