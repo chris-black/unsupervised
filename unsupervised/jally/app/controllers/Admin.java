@@ -6,8 +6,10 @@ import models.Burndown;
 import models.Iteration;
 import models.Scale;
 import models.Service;
+import models.Team;
 import reports.ScaleReport;
 import reports.ServiceReport;
+import serialized.FlatTeam;
 import jobs.NotificationActor;
 import jobs.NotificationType;
 import play.data.Form;
@@ -23,6 +25,8 @@ import akka.dispatch.Future;
 import akka.pattern.Patterns;
 import akka.util.Duration;
 import akka.util.Timeout;
+
+import static play.libs.Json.toJson;
 
 /**
  * Simple form processing to update Scale and Service tables
@@ -72,7 +76,7 @@ public class Admin extends Controller {
     	Form<Burndown> form = form(Burndown.class).bindFromRequest();
     	Iteration iteration = Iteration.find.byId(id);
     	Burndown added = form.get();
-    	iteration.addBurndown(added);
+    	iteration.createBurndown(added);
     	return redirect("/admin");
     }
     
@@ -89,5 +93,13 @@ public class Admin extends Controller {
 				return redirect("/admin");
 			}
 		}));
+    }
+    
+    public static Result bb() {
+    	return ok(bb.render());
+    }
+    
+    public static Result teams() {
+    	return ok(toJson(FlatTeam.flatTeams(Team.find.all())));
     }
 }

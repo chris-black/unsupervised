@@ -31,12 +31,15 @@ public class BurndownTest {
 	@BeforeClass
 	public static void setup() {
 		app = Helpers.fakeApplication(Helpers.inMemoryDatabase());
+		try {
 		Helpers.start(app);
-
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		server = Ebean.getServer("default");
 
 		ServerConfig config = new ServerConfig();
-		config.setDebugSql(true);
+		config.setDebugSql(false);
 
 		ddl = new DdlGenerator((SpiEbeanServer) server, new H2Platform(), config);
 	}

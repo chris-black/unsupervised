@@ -36,6 +36,14 @@ public class Release extends Model {
     	this.teams = Lists.newArrayList();
     }
     
+    public String toString() {
+    	StringBuffer buf = new StringBuffer();
+    	buf.append(name+"\n");
+    	for (Team team : teams) {
+    		buf.append(team).append("\n");
+    	}
+    	return buf.toString();
+    }
     /**
      * Business methods
      */
@@ -52,13 +60,10 @@ public class Release extends Model {
     public void merge(Release src) {
     	for (Team srcTeam : src.teams) {
     		Team exists = matching(srcTeam);
-    		Logger.info("Release:merge team:"+srcTeam.name+" exists:"+exists);
     		if (null != exists) {
     			exists.merge(srcTeam);
     		} else {
-    			srcTeam.release = this;
-    			teams.add(srcTeam);
-    			srcTeam.save();
+    			addTeam(srcTeam);
     			Logger.info("  Team did not exist, added to release:"+srcTeam.name);
     		}
     	}
@@ -73,9 +78,6 @@ public class Release extends Model {
     	return null;
     }
     
-    public String toString() {
-    	return this.name;
-    }
     /**
      * Generic query helper for entity Release with id Long
      */

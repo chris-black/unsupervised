@@ -51,7 +51,10 @@ public class Burndown extends Model {
     	this.iteration = iteration;
     }
     
-    
+
+    public String toString() {
+    	return ((this.id != null)?this.id:"x")+":"+this.day+":"+this.hours+":"+this.points;
+    }
     
     public Long getId() {
 		return id;
@@ -121,6 +124,10 @@ public class Burndown extends Model {
 		constraints.put("day", day);
 		constraints.put("iteration_id", iteration.id);
 		return find.where().allEq(constraints).findUnique();
+    }
+
+    public static Burndown getById(long id) {
+    	return find.byId(id);
     }
 }
 

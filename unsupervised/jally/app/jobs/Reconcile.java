@@ -1,5 +1,7 @@
 package jobs;
 
+import com.avaje.ebean.Ebean;
+
 import play.Logger;
 import models.Release;
 
@@ -15,10 +17,10 @@ public class Reconcile {
 		Release existingRelease = Release.getByName(release.name);
 		if (null != existingRelease) {
 			existingRelease.merge(release);
-			existingRelease.save();
+			Ebean.save(existingRelease);
 		} else {
 			// simple- cascade save
-			release.save();
+			Ebean.save(release);
 			Logger.info("Saved new release:"+release.name);
 		}
 	}

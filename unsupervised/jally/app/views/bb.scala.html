@@ -1,0 +1,90 @@
+@import helper._
+
+@blank(title = "Test BB") {
+		
+		<div id="teams"></div>
+		<script id="teamTemplate" type="text/template">
+    		<h1><%= name %></h1>
+		</script>
+
+		<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/json2.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
+	    <script type="text/javascript">
+	        $(document).ready( function(){
+
+	        	var allteams = [
+	        	                { name: "first"},
+	        	                { name: "second"},
+	        	                { name: "third"},
+	        	                { name: "forth"},
+	        	                { name: "fifth"},
+	        	                { name: "sixth"}
+	        	            ];
+
+		        
+	            Team = Backbone.Model.extend({
+	            	 defaults : {
+	            		    name : ""
+	            		  },
+	            });
+	            TeamCollection = Backbone.Collection.extend({
+	            	url: '/teams',
+	                model: Team, 
+	                initialize: function(){
+	                }
+	            });
+
+	            TeamView = Backbone.View.extend({
+	                tagName: "article",
+	                className: "contact-container",
+	                template: $("#teamTemplate").html(),
+	                render: function () {
+	                    var tmpl = _.template(this.template);
+	                    this.$el.html(tmpl(this.model.toJSON()));
+	                    //this.$el.html(tmpl(this.model));
+	                    return this;
+	                }
+	            });	            
+	            TeamAllView = Backbone.View.extend({
+	                el: $("#teams"),
+	             
+	                initialize: function () {
+	                    //this.collection = new TeamCollection(allteams);
+	                    this.collection = new TeamCollection();
+	                    this.collection.fetch({
+	                    	  success: function(r) {
+	                    		    var name = r.get('name');
+	                    		    console.log('team:', r.models[0].get("name"));
+	                    		  },
+	                    		  error: function(r) {
+	                    		    console.log('Unable to load team');
+	                    		  }
+	                    		});
+	                    this.collection.each(function(team) {
+	                    	});	                    
+	                },
+	             
+	                render: function () {
+	                    var that = this;
+	                    _.each(this.collection.models, function (item) {
+	                        that.renderTeam(item);
+	                    }, this);
+	                },
+	             
+	                renderTeam: function (item) {
+	                    var teamView = new TeamView({
+	                        model: item
+	                    });
+	                    this.$el.append(teamView.render().el);
+	                }
+	            });
+
+	            // Create a view once the document has loaded
+            	var teamAll = new TeamAllView();
+	        })
+	    </script>
+	    
+}
+

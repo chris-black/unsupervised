@@ -1,14 +1,14 @@
 package models;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.running;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+
+import jobs.Reconcile;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -79,30 +79,124 @@ public class ReleaseTest {
 	    }
 
 	    @Test
-	    public void reconcile() {
+	    public void reconcileRelease() {
      	   Release release = Release.getByName("grays");
-     	   System.out.println(release.teams.get(0).iterations.get(0).burndowns.size());
-     	   Release newRelease = new Release("grays");
+
+     	   Release newRelease = new Release("grays++");
      	   Team newTeam = new Team("Red");
+     	   newTeam.objId = "Red";
      	   Iteration newIteration = new Iteration("2012/06/17");
+     	   newIteration.objId = "two";
      	   //'2012-06-07', 38, 30, 16, 1
      	   Burndown newBurndown = new Burndown();
      	   
      	   // use today- does not matter iteration end here
      	   Calendar rightNow = Calendar.getInstance();
-     	   SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-     	   String day = formatter.format(rightNow.getTime());
-
+  		   SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
+  		   String day = formatter.format(rightNow.getTime());
      	   newBurndown.day = day;
      	   newBurndown.hours = 21;
      	   newBurndown.ideal = 0;
      	   newBurndown.points = 6;
+     	   
      	   newIteration.burndowns.add(newBurndown);
      	   newTeam.iterations.add(newIteration);
      	   newRelease.teams.add(newTeam);
-     	   release.merge(newRelease);
-     	   release.save();
+     	   
+     	   new Reconcile().reconcileModel(newRelease);
+     	   
+     	   // 2 existing plus this new one
+     	   assertThat(Release.find.all().size()).isEqualTo(2);
+	    }
+
+	    @Test
+	    public void reconcileTeam() {
+     	   Release release = Release.getByName("grays");
+
+     	   Release newRelease = new Release("grays");
+     	   Team newTeam = new Team("Blue");
+     	   newTeam.objId = "Blue";
+     	   Iteration newIteration = new Iteration("2012/06/17");
+     	   newIteration.objId = "two";
+     	   //'2012-06-07', 38, 30, 16, 1
+     	   Burndown newBurndown = new Burndown();
+     	   
+     	   // use today- does not matter iteration end here
+     	   Calendar rightNow = Calendar.getInstance();
+  		   SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
+  		   String day = formatter.format(rightNow.getTime());
+     	   newBurndown.day = day;
+     	   newBurndown.hours = 21;
+     	   newBurndown.ideal = 0;
+     	   newBurndown.points = 6;
+     	   
+     	   newIteration.burndowns.add(newBurndown);
+     	   newTeam.iterations.add(newIteration);
+     	   newRelease.teams.add(newTeam);
+
+     	   new Reconcile().reconcileModel(newRelease);
+
+     	   // 2 existing plus this new one
+     	   assertThat(Team.find.all().size()).isEqualTo(2);
+	    }
+
+	    @Test
+	    public void reconcileIteration() {
+     	   Release release = Release.getByName("grays");
+
+     	   Release newRelease = new Release("grays");
+     	   Team newTeam = new Team("Red");
+     	   newTeam.objId = "Red";
+     	   Iteration newIteration = new Iteration("2012/07/02");
+     	   newIteration.objId = "two";
+     	   //'2012-06-07', 38, 30, 16, 1
+     	   Burndown newBurndown = new Burndown();
+     	   
+     	   // use today- does not matter iteration end here
+     	   Calendar rightNow = Calendar.getInstance();
+  		   SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
+  		   String day = formatter.format(rightNow.getTime());
+     	   newBurndown.day = day;
+     	   newBurndown.hours = 21;
+     	   newBurndown.ideal = 0;
+     	   newBurndown.points = 6;
+     	   
+     	   newIteration.burndowns.add(newBurndown);
+     	   newTeam.iterations.add(newIteration);
+     	   newRelease.teams.add(newTeam);
+     	   
+     	   new Reconcile().reconcileModel(newRelease);
+     	   // 2 existing plus this new one
+     	   assertThat(Iteration.find.all().size()).isEqualTo(2);
+	    }
+	    @Test
+	    public void reconcileBurndown() {
+     	   Release release = Release.getByName("grays");
+
+     	   Release newRelease = new Release("grays");
+     	   Team newTeam = new Team("Red");
+     	   newTeam.objId = "Red";
+     	   Iteration newIteration = new Iteration("2012/06/17");
+     	   newIteration.objId = "one";
+     	   //'2012-06-07', 38, 30, 16, 1
+     	   Burndown newBurndown = new Burndown();
+     	   
+     	   // use today- does not matter iteration end here
+     	   Calendar rightNow = Calendar.getInstance();
+  		   SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
+  		   String day = formatter.format(rightNow.getTime());
+     	   newBurndown.day = day;
+     	   newBurndown.hours = 21;
+     	   newBurndown.ideal = 0;
+     	   newBurndown.points = 6;
+     	   
+     	   newIteration.burndowns.add(newBurndown);
+     	   newTeam.iterations.add(newIteration);
+     	   newRelease.teams.add(newTeam);
+
+     	   new Reconcile().reconcileModel(newRelease);
      	   // 2 existing plus this new one
      	   assertThat(Burndown.find.all().size()).isEqualTo(3);
 	    }
+
 }

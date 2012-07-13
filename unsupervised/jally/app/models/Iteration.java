@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.*;
 
 import org.apache.commons.lang.StringUtils;
+
 import com.google.common.collect.Lists;
 
 import play.Logger;
@@ -39,6 +40,10 @@ public class Iteration extends Model {
     
     public int totalHours;
     
+    public int completedPoints;
+    
+    public int completedHours;
+    
     @ManyToOne
     public Team team;
     
@@ -50,6 +55,8 @@ public class Iteration extends Model {
     	this.objId= src.ObjectID;
     	this.totalHours = 0;
     	this.totalPoints = 0;
+    	this.completedPoints = 0;
+    	this.completedHours = 0;
     	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     	try {
 			this.iterationStart = formatter.parse(src.StartDate);
@@ -69,6 +76,15 @@ public class Iteration extends Model {
     public Iteration(String name) {
     	this.name = name;
     	this.burndowns = Lists.newArrayList();
+    }
+    
+    public String toString() {
+       	StringBuffer buf = new StringBuffer();
+    	buf.append(name+"\n");
+    	for (Burndown burndown : burndowns) {
+    		buf.append(burndown).append("\n");
+    	}
+    	return buf.toString();
     }
     
     /**
@@ -96,6 +112,18 @@ public class Iteration extends Model {
     	}
     	return true;
     }
+
+    public Burndown createBurndown(Burndown src) {
+    	addBurndown(src).save();
+    	return src;
+    }
+
+    public Burndown addBurndown(Burndown src) {
+    	burndowns.add(src);
+    	src.iteration = this;
+    	return src;
+    }
+    
     /**
      * If given burndown does not exist and fits then add to list and save
      * TODO guava predicate to order and append
@@ -103,25 +131,21 @@ public class Iteration extends Model {
      */
     public void merge(Iteration src) {
     	Burndown srcToday = src.burndownToday();
+		Burndown existing = burndownToday();
     	// run on another day ignores
-    	if (null == burndownToday() && null != srcToday) {
-    		srcToday.iteration = this;
-    		srcToday.save();
-    		burndowns.add(srcToday);
-    		Logger.info("Iteration:merge add burndown:"+srcToday.day);
+    	if (null == existing && null != srcToday) {
+    		addBurndown(srcToday);
+    		Logger.info("Iteration:merge add burndown:"+srcToday);
+    	} else if (null != srcToday) {
+    		// update existing
+    		if (existing.hours != srcToday.hours || existing.points != srcToday.points) {
+        		Logger.info("Iteration:merge update existing:"+existing+" src:"+srcToday);
+        		existing.setHours(srcToday.getHours());
+        		existing.setPoints(srcToday.getPoints());
+    		}
     	}
     }
 
-    public void addBurndown(Burndown dst) {
-    	Logger.info("Iteration.addBurndown iteration.id:"+this.id+"  day:"+dst.day+" hrs:"+dst.hours);
-    	dst.iteration = this;
-    	dst.save();
-//    	burndowns.add(dst);
-    	for (Burndown bd: burndowns) {
-    		Logger.info("BD:"+bd.day+" hr:"+bd.hours);
-    	}
-//    	update();
-    }
     
     /**
      * answer back the burndown matching given day

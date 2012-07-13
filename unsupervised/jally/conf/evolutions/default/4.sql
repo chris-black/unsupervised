@@ -18,11 +18,8 @@ insert into service (id,month,percent_complete,percent_goal,avg_throughput,throu
 insert into service (id,month,percent_complete,percent_goal,avg_throughput,throughput_goal) values ( 7,'2012-11-01', 0, 48, 0, 200);
 insert into service (id,month,percent_complete,percent_goal,avg_throughput,throughput_goal) values ( 8,'2012-12-01', 0, 50, 0, 200);
 
+
 # --- !Downs
 
-delete from burndown;
-delete from iteration;
-delete from team;
-delete from release;
-delete from scale;
-delete from service;
+
+

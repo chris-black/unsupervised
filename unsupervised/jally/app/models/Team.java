@@ -45,20 +45,33 @@ public class Team extends Model {
     	this.iterations = Lists.newArrayList();
     }
     
+    public String toString() {
+       	StringBuffer buf = new StringBuffer();
+    	buf.append(name+"\n");
+    	for (Iteration iteration : iterations) {
+    		buf.append(iteration).append("\n");
+    	}
+    	return buf.toString();
+
+    }
+    
     /**
      * Business methods
      */
     
+    public Iteration addIteration(Iteration src) {
+    	iterations.add(src);
+    	src.team = this;
+    	return src;
+    }
+    
     public void merge(Team src) {
     	for (Iteration srcIteration : src.iterations) {
     		Iteration exists = matching(srcIteration);
-    		Logger.info("Team:merge srcIter:"+srcIteration.name+" exists:"+exists);
     		if (null != exists) {
     			exists.merge(srcIteration);
     		} else {
-    			srcIteration.team = this;
-    			iterations.add(srcIteration);
-    			srcIteration.save();
+    			addIteration(srcIteration);
     			Logger.info("  Iteration did not exist, added to release:"+srcIteration.name);
     		}
     	}

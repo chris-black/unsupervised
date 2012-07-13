@@ -28,7 +28,10 @@
 
 		  // Create and draw the visualization.
 		  new google.visualization.ColumnChart(document.getElementById('chart_div-@report.title')).
-		      draw(data, {legend: {position: 'top'}, width:300, height:200} );
+		      draw(data, {legend: {position: 'top'},
+		    	  vAxes: {
+		    	      0: {title: "RoundTrip (ms)", maxValue: "500"},
+		    	    }, colors:['blue','green'], width:500, height:300} );
 
     	}
 	</script>    

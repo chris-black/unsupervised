@@ -62,7 +62,7 @@ public class Dashboard {
 		reports.add(new ScaleReport("Portal", scaleData).generate().htmlReport);
 		reports.add(new ScaleReport("HAN", scaleData).generate().htmlReport);
 		List<Service> serviceData = Service.all();
-		reports.add(new ServiceReport("Complete", serviceData).generate().htmlReport);
+		reports.add(new ServiceReport("% Complete", serviceData).generate().htmlReport);
 		reports.add(new ThroughputReport("Throughput", serviceData).generate().htmlReport);
 		
 		return reports;
