@@ -2,16 +2,26 @@
 
 @main(title = "Metrics dashboard") {
     
-    <div class="row">
-    @for(report <- dashboard.reports) {
-    	@if(dashboard.dashboardType.equals(jobs.DashboardType.Master)) {
+    <div class="row-fluid">
 	  	<div class="span6">
-    	} else {
-	  	<div class="span12">
-    	}
-	       	@Html(report)
+    @for( (report, i) <- dashboard.reports.zipWithIndex) {
+        @if(0 != i && i % 2 == 0) {
 	  	</div>
+	  	<div class="span6">
+        }
+        @Html(report)
     } 
+	  	</div>
 	</div>
+   	@if(dashboard.dashboardType.equals(jobs.DashboardType.Master)) {
+    <div class="row">
+	  	<div class="span6 offset2">
+	  		<p style="padding-top:20px;">
+	  			Service Development Progress </br>
+	   			<img src="@routes.Assets.at("images/service-progress.png")" />
+	   		</p>
+	  	</div>
+	</div>
+   	}
     
 }

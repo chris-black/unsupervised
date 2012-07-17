@@ -226,7 +226,7 @@ public class Iteration extends Model {
      * @return
      */
     public static List<Iteration> getTeamIterationsOn(Date iterationDate) {
-    	List<Iteration> iterations = find.where().lt("iterationStart", iterationDate).ge("iterationEnd", iterationDate).findList();
+    	List<Iteration> iterations = find.where().lt("iterationStart", iterationDate).gt("iterationEnd", iterationDate).findList();
     	// eager load teams
     	for (Iteration iter : iterations) {
     		String name = iter.team.name;

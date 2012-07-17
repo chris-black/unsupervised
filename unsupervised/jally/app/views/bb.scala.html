@@ -4,9 +4,15 @@
 		
 		<div id="teams"></div>
 		<script id="teamTemplate" type="text/template">
-    		<h1><%= name %></h1>
+    		<h3><%= name %></h3>
+			<h3><%= iterations[0] %></h3>
 		</script>
-
+	
+		<form id="addTeam" action="#">
+    		<label for="name">Name:</label><input id="name" />
+   			<button id="add">Add</button>
+		</form>
+		
 		<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.1.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/json2.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
@@ -33,7 +39,10 @@
 	            	url: '/teams',
 	                model: Team, 
 	                initialize: function(){
-	                }
+	                },
+	                parse: function(data){
+		                return data;
+    	            }
 	            });
 
 	            TeamView = Backbone.View.extend({
@@ -43,29 +52,40 @@
 	                render: function () {
 	                    var tmpl = _.template(this.template);
 	                    this.$el.html(tmpl(this.model.toJSON()));
-	                    //this.$el.html(tmpl(this.model));
 	                    return this;
 	                }
 	            });	            
 	            TeamAllView = Backbone.View.extend({
 	                el: $("#teams"),
-	             
+	                events: {
+	                    'click button#add': 'addTeam'
+	                  },
 	                initialize: function () {
 	                    //this.collection = new TeamCollection(allteams);
 	                    this.collection = new TeamCollection();
+	                    _.bindAll(this, 'render', 'addTeam', 'appendTeam'); 
+	                    this.collection.bind('add', this.appendTeam);
+	                    var tc = this;
 	                    this.collection.fetch({
 	                    	  success: function(r) {
-	                    		    var name = r.get('name');
-	                    		    console.log('team:', r.models[0].get("name"));
+	                    		    tc.render();
 	                    		  },
 	                    		  error: function(r) {
 	                    		    console.log('Unable to load team');
 	                    		  }
 	                    		});
-	                    this.collection.each(function(team) {
-	                    	});	                    
 	                },
-	             
+
+	                addTeam: function() {
+		                console.log("add team");
+		                var team = new Team();
+		                team.set({name: "bobo"});
+		                this.collection.add(team);
+		            },
+	                appendTeam: function() {
+		                console.log("append team");
+		            },
+		            
 	                render: function () {
 	                    var that = this;
 	                    _.each(this.collection.models, function (item) {
